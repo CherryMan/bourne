@@ -2,7 +2,6 @@ Logger.configure(level: :info)
 
 # TODO(mtwilliams): Test against other adapters.
 Application.put_env :bourne, Bourne.Test.Repo, [
-  adapter: Ecto.Adapters.Postgres,
   url: System.get_env("DATABASE_URL") || "ecto://postgres:postgres@localhost/bourne",
   pool: Ecto.Adapters.SQL.Sandbox
 ]
@@ -16,6 +15,7 @@ _   = Ecto.Adapters.Postgres.storage_down(Bourne.Test.Repo.config)
 :ok = Ecto.Adapters.Postgres.storage_up(Bourne.Test.Repo.config)
 
 {:ok, _} = Bourne.Test.Repo.start_link()
+{:ok, _} = Application.ensure_all_started(:ecto_sql)
 
 migrations = Path.join(:code.priv_dir(:bourne), "/repo/migrations")
 migration = Path.join(migrations, "1_setup.exs")
